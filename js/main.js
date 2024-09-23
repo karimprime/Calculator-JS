@@ -49,7 +49,7 @@ function calculate() {
             result = prev * curr;
             break;
         case '/':
-            result = curr === 0 ? 'Error' : prev / curr; // Prevent division by zero
+            result = curr === 0 ? 'Error' : prev / curr;
             break;
         case '%':
             result = prev % curr;
