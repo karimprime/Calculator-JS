@@ -1,87 +1,93 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', sans-serif;
-}
+let display = document.getElementById('display');
+let currentInput = '';
+let previousInput = '';
+let operation = null;
 
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f4f4f9;
-}
 
-.calculator {
-    background-color: #ffffff;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 350px;
-    width: 100%;
-}
-
-.display {
-    background-color: #000;
-    color: #fff;
-    font-size: 2rem;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: right;
-    margin-bottom: 20px;
-    word-wrap: break-word;
-    min-height: 60px;
-}
-
-.buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-}
-
-.button {
-    background-color: #f1f1f1;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.5rem;
-    padding: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.button:hover {
-    background-color: #d1d1d1;
-}
-
-.button.operation {
-    background-color: #0066ff;
-    color: white;
-    transition: background-color 0.3s ease;
-}
-
-.button.operation:hover {
-    background-color: #0f27ff;
+function clearDisplay() {
+    currentInput = '';
+    previousInput = '';
+    operation = null;
+    display.value = '0';
 }
 
 
-.button.equal {
-    background-color: #0066ff;
-    color: white;
-    grid-column: span 2;
-    transition: background-color 0.3s ease;
+function appendNumber(number) {
+    if (currentInput.length >= 10) return;
+    if (currentInput === '0' && number === '0') return;
+    currentInput += number;
+    updateDisplay();
 }
 
-.button.equal:hover{
-    background-color: #0f27ff;
+function appendDot() {
+    if (!currentInput.includes('.')) {
+        currentInput += '.';
+    }
+    updateDisplay();
 }
 
-.button.clear {
-    background-color: #ff0000;
-    color: white;
-    transition: background-color 0.3s ease;
+function backspace() {
+    if (currentInput.length > 0) {
+        currentInput = currentInput.slice(0, -1); // Remove the last character
+    }
+    updateDisplay();
 }
 
-.button.clear:hover {
-    background-color: #cf0202;
+function appendOperation(op) {
+    if (currentInput === '') return;
+    if (previousInput !== '') calculate();
+    operation = op;
+    previousInput = currentInput;
+    currentInput = '';
+}
+
+function calculate() {
+    let result;
+    const prev = parseFloat(previousInput);
+    const curr = parseFloat(currentInput);
+    if (isNaN(prev) || isNaN(curr)) return;
+
+    switch (operation) {
+        case '+':
+            result = prev + curr;
+            break;
+        case '-':
+            result = prev - curr;
+            break;
+        case '*':
+            result = prev * curr;
+            break;
+        case '/':
+            result = curr === 0 ? 'Error' : prev / curr;
+            break;
+        case '%':
+            result = prev % curr;
+            break;
+        case '^':
+            result = Math.pow(prev, curr);
+            break;
+        default:
+            return;
+    }
+
+    currentInput = result.toString().length > 10 ? result.toFixed(5).toString() : result.toString();
+    operation = null;
+    previousInput = '';
+    updateDisplay();
+}
+
+function updateDisplay() {
+    display.value = currentInput || '0';
+}
+
+function roundNumber() {
+    if (currentInput === '') return;
+    currentInput = Math.round(parseFloat(currentInput)).toString();
+    updateDisplay();
+}
+
+
+function randomNumber() {
+    currentInput = Math.random().toFixed(2).toString();
+    updateDisplay();
 }
